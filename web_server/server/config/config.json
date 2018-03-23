@@ -1,4 +1,6 @@
 {
   "mongoDbUri": "mongodb://admin:admin@ds117485.mlab.com:17485/tap-news-auth",
-  "jwtSecret": "a secret phrase!!"
+  "jwtSecret": "a secret phrase!!",
+  "server_host": "localhost",
+  "server_port": 4040
 }

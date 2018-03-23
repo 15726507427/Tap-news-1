@@ -1,6 +1,7 @@
 import operator
 import os
 import sys
+import yaml
 
 from jsonrpclib.SimpleJSONRPCServer import SimpleJSONRPCServer
 
@@ -8,10 +9,15 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
 
 import mongodb_client
 
-PREFERENCE_MODEL_TABLLE_NAME = 'user_preference_model'
+stream = open('../config.yaml', 'r')
+load = yaml.load(stream)
+config = load['common']
 
-SERVER_HOST = 'localhost'
-SERVER_PORT = 5050
+# news recommendation server hosted on port 5050
+SERVER_HOST = config['news_recommendation_server']['SERVER_HOST']
+SERVER_PORT = config['news_recommendation_server']['SERVER_PORT']
+
+PREFERENCE_MODEL_TABLE_NAME = config['mongodb']['PREFERENCE_MODEL_TABLE_NAME']
 
 def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
     return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
@@ -19,7 +25,7 @@ def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
 def getPreferenceForUser(user_id):
     """ Get user's preference in an ordered class list """
     db = mongodb_client.get_db()
-    model = db[PREFERENCE_MODEL_TABLLE_NAME].find_one({'userId': user_id})
+    model = db[PREFERENCE_MODEL_TABLE_NAME].find_one({'userId': user_id})
 
     if model is None:
         return []

@@ -1,9 +1,10 @@
 var jayson = require('jayson');
+var config = require('../config/config.json');
 
 // create a client
 var client = jayson.client.http({
-    hostname: 'localhost',
-    port: 4040
+    hostname: config.server_host,
+    port: config.server_port
 });
 
 // invoke "add"

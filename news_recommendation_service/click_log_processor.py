@@ -19,6 +19,7 @@ would bias towards more recent results more.
 import news_classes
 import os
 import sys
+import yaml
 
 # import common package in parent directory
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
@@ -26,17 +27,22 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
 import mongodb_client
 from cloudAMQP_client import CloudAMQPClient
 
-NUM_OF_CLASSES = 8
+stream = open('../config.yaml', 'r')
+load = yaml.load(stream)
+config = load['common']
+
+NUM_OF_CLASSES = len(news_classes.classes)
 INITIAL_P = 1.0 / NUM_OF_CLASSES
-ALPHA = 0.1
+# print("num of classes: %d, initial possibility: %f." % (NUM_OF_CLASSES, INITIAL_P))
+ALPHA = config['news_recommendation_server']['ALPHA']
 
-SLEEP_TIME_IN_SECONDS = 3
+SLEEP_TIME_IN_SECONDS = config['cloudAMQP']['CLICK_LOG_SLEEP_TIME_IN_SECONDS']
 
-CLICK_LOG_TASK_QUEUE_URL = 'amqp://uhkguhqy:SFT8Vf9Ln3s7cfs8_ZwErFww8UB3V5RJ@otter.rmq.cloudamqp.com/uhkguhqy'
-CLICK_LOG_TASK_QUEUE_NAME = 'news-click-log'
+CLICK_LOG_TASK_QUEUE_URL = config['cloudAMQP']['CLICK_LOG_TASK_QUEUE_URL']
+CLICK_LOG_TASK_QUEUE_NAME = config['cloudAMQP']['CLICK_LOG_TASK_QUEUE_NAME']
 
-PREFERENCE_MODEL_TABLE_NAME = "user_preference_model"
-NEWS_TABLE_NAME = "news"
+PREFERENCE_MODEL_TABLE_NAME = config['mongodb']['PREFERENCE_MODEL_TABLE_NAME']
+NEWS_TABLE_NAME = config['mongodb']['NEWS_TABLE_NAME']
 
 cloudAMQP_client = CloudAMQPClient(CLICK_LOG_TASK_QUEUE_URL, CLICK_LOG_TASK_QUEUE_NAME)
 

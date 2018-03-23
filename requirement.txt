@@ -10,3 +10,4 @@ requests
 sklearn
 tensorflow
 watchdog
+yaml

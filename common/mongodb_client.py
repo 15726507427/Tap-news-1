@@ -1,8 +1,14 @@
 from pymongo import MongoClient
 
-MONGO_DB_HOST = 'localhost'
-MONGO_DB_PORT = 27017
-DB_NAME = 'tap-news'
+import yaml
+
+stream = open("../config.yaml", "r")
+load = yaml.load(stream)
+config = load['common']
+
+MONGO_DB_HOST = config['mongodb']['HOST']
+MONGO_DB_PORT = config['mongodb']['PORT']
+DB_NAME = config['mongodb']['DB_NAME']
 
 client = MongoClient("%s:%s" % (MONGO_DB_HOST, MONGO_DB_PORT))
 

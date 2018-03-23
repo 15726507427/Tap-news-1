@@ -3,42 +3,37 @@ import hashlib
 import redis
 import os
 import sys
+import yaml
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
 
 import news_api_client
 from cloudAMQP_client import CloudAMQPClient
 
-SLEEP_TIME_IN_SECONDS = 10
-NEWS_TIME_OUT_IN_SECONDS = 3600 * 24 * 3
+stream = open('../config.yaml', 'r')
+load = yaml.load(stream)
+config = load['common']
+
+config_cloudAMQP = config['cloudAMQP']
+
+SCRAPE_NEWS_TASK_QUEUE_URL = config_cloudAMQP['SCRAPE_NEWS_TASK_QUEUE_URL']
+SCRAPE_NEWS_TASK_QUEUE_NAME = config_cloudAMQP['SCRAPE_NEWS_TASK_QUEUE_NAME']
+
+SLEEP_TIME_IN_SECONDS = config_cloudAMQP['MONITOR_SLEEP_TIME_IN_SECONDS']
+NEWS_TIME_OUT_IN_SECONDS = config_cloudAMQP['NEWS_TIME_OUT_IN_DAYS'] * 3600 * 24
 
 # redis-server at default port
-REDIS_HOST = 'localhost'
-REDIS_PORT = 6379
+REDIS_HOST = config['redis']['HOST']
+REDIS_PORT = config['redis']['PORT']
 
-SCRAPE_NEWS_TASK_QUEUE_URL = 'amqp://nifchscl:vSSrLMljckfH22yVWZu3oAMHyAoLcuM-@otter.rmq.cloudamqp.com/nifchscl'
-SCRAPE_NEWS_TASK_QUEUE_NAME = 'tap-news-monitor'
-
-NEWS_SOURCES = [
-    'bbc-news',
-    'bbc-sport',
-    'bloomberg',
-    'cnn',
-    'entertainment-weekly',
-    'espn',
-    'ign',
-    'techcrunch',
-    'the-new-york-times',
-    'the-wall-street-journal',
-    'the-washington-post'
-]
+# NEWS_SOURCES = []
 
 redis_client = redis.StrictRedis(REDIS_HOST, REDIS_PORT)
 cloudAMQP_client = CloudAMQPClient(SCRAPE_NEWS_TASK_QUEUE_URL, SCRAPE_NEWS_TASK_QUEUE_NAME)
 
 def run():
     while True:
-        news_list = news_api_client.getNewsFromSource(NEWS_SOURCES)
+        news_list = news_api_client.getNewsFromSource()     # Use default news sources in config file
 
         num_of_news = 0
 

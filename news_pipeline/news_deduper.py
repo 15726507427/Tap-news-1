@@ -1,6 +1,7 @@
 import os
 import sys
 import datetime
+import yaml
 
 from dateutil import parser
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -11,14 +12,20 @@ import mongodb_client
 from cloudAMQP_client import CloudAMQPClient
 import news_topic_modeling_service_client
 
-DEDUPE_NEWS_TASK_QUEUE_URL = 'amqp://mctuftbf:9PdbLbIsbJ1bRXpwWiF-s2tYmvLnf14l@mosquito.rmq.cloudamqp.com/mctuftbf'
-DEDUPE_NEWS_TASK_QUEUE_NAME = 'tap-news-deduper'
+stream = open('../config.yaml', 'r')
+load = yaml.load(stream)
+config = load['common']
 
-SLEEP_TIME_IN_SECONDS = 1
+config_cloudAMQP = config['cloudAMQP']
 
-NEWS_TABLE_NAME = 'news'
+DEDUPE_NEWS_TASK_QUEUE_URL = config_cloudAMQP['DEDUPE_NEWS_TASK_QUEUE_URL']
+DEDUPE_NEWS_TASK_QUEUE_NAME = config_cloudAMQP['DEDUPE_NEWS_TASK_QUEUE_NAME']
 
-SAME_NEWS_SIMILARITY_THRESHOLD = 0.9
+SLEEP_TIME_IN_SECONDS = config_cloudAMQP['DEDUPE_SLEEP_TIME_IN_SECONDS']
+
+NEWS_TABLE_NAME = config['mongodb']['NEWS_TABLE_NAME']
+
+SAME_NEWS_SIMILARITY_THRESHOLD = config['SAME_NEWS_SIMILARITY_THRESHOLD']
 
 cloudAMQP_client = CloudAMQPClient(DEDUPE_NEWS_TASK_QUEUE_URL, DEDUPE_NEWS_TASK_QUEUE_NAME)
 

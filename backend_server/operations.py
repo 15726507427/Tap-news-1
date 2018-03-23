@@ -3,6 +3,7 @@ import sys
 import json
 import pickle
 import redis
+import yaml
 
 from bson.json_util import dumps
 from datetime import date, datetime
@@ -13,20 +14,23 @@ import mongodb_client
 from cloudAMQP_client import CloudAMQPClient
 import recommendation_service_client
 
-NEWS_TABLE_NAME = 'news' # table name
+stream = open("../config.yaml", "r")
+load = yaml.load(stream)
+config = load['common']
 
-REDIS_HOST = 'localhost'
-REDIS_PORT = 6379
+NEWS_TABLE_NAME = config['mongodb']['NEWS_TABLE_NAME'] # table name
 
-NEWS_LIST_BATCH_SIZE = 10 		# number of news in single page
-NEWS_LIMIT = 200 		    	# maximum number of news of one fetch from mongoDB
-USER_NEWS_TIME_OUT_IN_SECONDS = 60 # timeout for user's pagination info in redis
+REDIS_HOST = config['redis']['HOST']
+REDIS_PORT = config['redis']['PORT']
+
+NEWS_LIST_BATCH_SIZE = config['backend_server']['NEWS_LIST_BATCH_SIZE']		# number of news in single page
+NEWS_LIMIT = config['backend_server']['NEWS_LIMIT'] 		    	        # maximum number of news of one fetch from mongoDB
+USER_NEWS_TIME_OUT_IN_SECONDS = config['backend_server']['USER_NEWS_TIME_OUT_IN_SECONDS'] # timeout for user's pagination info in redis
+
+CLICK_LOG_TASK_QUEUE_URL = config['cloudAMQP']['CLICK_LOG_TASK_QUEUE_URL']
+CLICK_LOG_TASK_QUEUE_NAME = config['cloudAMQP']['CLICK_LOG_TASK_QUEUE_NAME']
 
 redis_client = redis.StrictRedis(REDIS_HOST, REDIS_PORT, db=0)
-
-CLICK_LOG_TASK_QUEUE_URL = 'amqp://uhkguhqy:SFT8Vf9Ln3s7cfs8_ZwErFww8UB3V5RJ@otter.rmq.cloudamqp.com/uhkguhqy'
-CLICK_LOG_TASK_QUEUE_NAME = 'news-click-log'
-
 cloudAMQP_client = CloudAMQPClient(CLICK_LOG_TASK_QUEUE_URL, CLICK_LOG_TASK_QUEUE_NAME)
 
 def getOneNews():

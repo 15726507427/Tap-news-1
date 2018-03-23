@@ -1,6 +1,12 @@
 import jsonrpclib
+import yaml
 
-URL = "http://localhost:5050/"
+stream = open('../config.yaml', 'r')
+load = yaml.load(stream)
+config = load['common']
+
+# news recommendation server hosted on port 5050
+URL = config['news_recommendation_server']['URL']
 
 client = jsonrpclib.ServerProxy(URL)
 

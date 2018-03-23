@@ -4,18 +4,24 @@ import os
 import pandas as pd
 import pickle
 import shutil
+import yaml
 import tensorflow as tf
 
 from sklearn import metrics
 
 learn = tf.contrib.learn
 
+stream = open('../../config.yaml', 'r')
+load = yaml.load(stream)
+config = load['common']['news_topic_modeling_server']
+
 REMOVE_PREVIOUS_MODEL = True
 
-MODEL_OUTPUT_DIR = '../model/'
-DATA_SET_FILE = '../data/labeled_news.csv'
-VARS_FILE = '../model/vars'
-VOCAB_PROCESSOR_SAVE_FILE = '../model/vocab_procesor_save_file'
+MODEL_OUTPUT_DIR = config['MODEL_DIR']
+DATA_SET_FILE = config['DATA_SET_FILE']
+VARS_FILE = config['VARS_FILE']
+VOCAB_PROCESSOR_SAVE_FILE = config['VOCAB_PROCESSOR_SAVE_FILE']
+# Self trained
 MAX_DOCUMENT_LENGTH = 100
 N_CLASSES = 8
 

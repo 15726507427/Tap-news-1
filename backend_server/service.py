@@ -1,11 +1,17 @@
 import json
 import operations
+import yaml
 
 from bson.json_util import dumps
 from jsonrpclib.SimpleJSONRPCServer import SimpleJSONRPCServer
 
-SERVER_HOST = 'localhost'
-SERVER_PORT = 4040
+stream = open("../config.yaml", "r")
+load = yaml.load(stream)
+config = load['common']
+
+# Backend RPC Server hosted on port 4040
+SERVER_HOST = config['backend_server']['HOST']
+SERVER_PORT = config['backend_server']['PORT']
 
 def add(num1, num2):
     print("add is called with %d and %d" % (num1, num2))

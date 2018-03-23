@@ -4,6 +4,7 @@ import os
 import sys
 import pandas as pd
 import pickle
+import yaml
 
 import tensorflow as tf
 import time
@@ -19,22 +20,27 @@ import news_cnn_model
 
 learn = tf.contrib.learn
 
-SERVER_HOST = 'localhost'
-SERVER_PORT = 6060
+stream = open('../../config.yaml', 'r')
+load = yaml.load(stream)
+config = load['common']['news_topic_modeling_server']
 
-MODEL_DIR = '../model'
-MODEL_UPDATE_LAG_IN_SECONDS = 10
+# Topic Modeling Server hosted on port 6060
+SERVER_HOST = config['SERVER_HOST']
+SERVER_PORT = config['SERVER_PORT']
 
-N_CLASSES = 8
+MODEL_DIR = config['MODEL_DIR']
+MODEL_UPDATE_LAG_IN_SECONDS = config['MODEL_UPDATE_LAG_IN_SECONDS']
 
-VARS_FILE = '../model/vars'
-VOCAB_PROCESSOR_SAVE_FILE = '../model/vocab_procesor_save_file'
+N_CLASSES = len(news_classes.class_map.items())
+# print('num of classes: %d' % N_CLASSES)
+
+VARS_FILE = config['VARS_FILE']
+VOCAB_PROCESSOR_SAVE_FILE = config['VOCAB_PROCESSOR_SAVE_FILE']
+
+MAX_DOCUMENT_LENGTH = config['MAX_DOCUMENT_LENGTH']
 
 n_words = 0
-
-MAX_DOCUMENT_LENGTH = 500
 vocab_processor = None
-
 classifier = None
 
 def restoreVars():

@@ -1,5 +1,6 @@
 import os
 import sys
+import yaml
 
 from newspaper import Article
 
@@ -7,13 +8,17 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
 
 from cloudAMQP_client import CloudAMQPClient
 
-SCRAPE_NEWS_TASK_QUEUE_URL = 'amqp://nifchscl:vSSrLMljckfH22yVWZu3oAMHyAoLcuM-@otter.rmq.cloudamqp.com/nifchscl'
-SCRAPE_NEWS_TASK_QUEUE_NAME = 'tap-news-monitor'
+stream = open('../config.yaml', 'r')
+load = yaml.load(stream)
+config = load['common']['cloudAMQP']
 
-DEDUPE_NEWS_TASK_QUEUE_URL = 'amqp://mctuftbf:9PdbLbIsbJ1bRXpwWiF-s2tYmvLnf14l@mosquito.rmq.cloudamqp.com/mctuftbf'
-DEDUPE_NEWS_TASK_QUEUE_NAME = 'tap-news-deduper'
+SCRAPE_NEWS_TASK_QUEUE_URL = config['SCRAPE_NEWS_TASK_QUEUE_URL']
+SCRAPE_NEWS_TASK_QUEUE_NAME = config['SCRAPE_NEWS_TASK_QUEUE_NAME']
 
-SLEEP_TIME_IN_SECONDS = 5
+DEDUPE_NEWS_TASK_QUEUE_URL = config['DEDUPE_NEWS_TASK_QUEUE_URL']
+DEDUPE_NEWS_TASK_QUEUE_NAME = config['DEDUPE_NEWS_TASK_QUEUE_NAME']
+
+SLEEP_TIME_IN_SECONDS = config['FETCHER_SLEEP_TIME_IN_SECONDS']
 
 scrape_news_queue_client = CloudAMQPClient(SCRAPE_NEWS_TASK_QUEUE_URL, SCRAPE_NEWS_TASK_QUEUE_NAME)
 dedupe_news_queue_client = CloudAMQPClient(DEDUPE_NEWS_TASK_QUEUE_URL, DEDUPE_NEWS_TASK_QUEUE_NAME)

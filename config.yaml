@@ -1,0 +1,72 @@
+common:
+  mongodb:
+    HOST: localhost
+    PORT: 27017
+    DB_NAME: tap-news
+    NEWS_TABLE_NAME: news
+    PREFERENCE_MODEL_TABLE_NAME: user_preference_model
+
+  redis:
+    HOST: localhost
+    PORT: 6379
+
+  cloudAMQP:
+    SCRAPE_NEWS_TASK_QUEUE_URL: amqp://nifchscl:vSSrLMljckfH22yVWZu3oAMHyAoLcuM-@otter.rmq.cloudamqp.com/nifchscl
+    SCRAPE_NEWS_TASK_QUEUE_NAME: tap-news-monitor
+    DEDUPE_NEWS_TASK_QUEUE_URL: amqp://mctuftbf:9PdbLbIsbJ1bRXpwWiF-s2tYmvLnf14l@mosquito.rmq.cloudamqp.com/mctuftbf
+    DEDUPE_NEWS_TASK_QUEUE_NAME: tap-news-deduper
+    CLICK_LOG_TASK_QUEUE_URL: amqp://uhkguhqy:SFT8Vf9Ln3s7cfs8_ZwErFww8UB3V5RJ@otter.rmq.cloudamqp.com/uhkguhqy
+    CLICK_LOG_TASK_QUEUE_NAME: news_click_log
+
+    MONITOR_SLEEP_TIME_IN_SECONDS: 10
+    NEWS_TIME_OUT_IN_DAYS: 3
+    FETCHER_SLEEP_TIME_IN_SECONDS: 5
+    DEDUPE_SLEEP_TIME_IN_SECONDS: 1
+    CLICK_LOG_SLEEP_TIME_IN_SECONDS: 3
+
+  news_api:
+    NEWS_API_ENDPOINTS: https://newsapi.org/v1/
+    NEWS_API_KEY: fd8f00657a8b46c882b12a6a942dc1d9
+    NEWS_API_ALTERNATE_KEY: fd313653d3cc4f9e87cf24ba5afa7150
+    ARTICLES_API: articles
+    DEFAULT_SOURCES:
+      - bbc-news
+      - bbc-sport
+      - bloomberg
+      - cnn
+      - entertainment-weekly
+      - espn
+      - ign
+      - techcrunch
+      - the-new-york-times
+      - the-wall-street-journal
+      - the-washington-post
+    SORT_BY_TOP: top
+
+  backend_server:
+    HOST: localhost
+    PORT: 4040
+    NEWS_LIST_BATCH_SIZE: 10
+    NEWS_LIMIT: 200
+    USER_NEWS_TIME_OUT_IN_SECONDS: 60
+
+  news_recommendation_server:
+    URL: http://localhost:5050
+    SERVER_HOST: localhost
+    SERVER_PORT: 5050
+    # ALPHA: Time Decay Model parameter
+    ALPHA: 0.1
+
+  news_topic_modeling_server:
+    URL: http://localhost:6060
+    SERVER_HOST: localhost
+    SERVER_PORT: 6060
+    DATA_SET_FILE: ../data/labeled_news.csv
+    MODEL_DIR: ../model
+    MODEL_UPDATE_LAG_IN_SECONDS: 10
+    VARS_FILE: ../model/vars
+    VOCAB_PROCESSOR_SAVE_FILE: ../model/vocab_procesor_save_file
+    MAX_DOCUMENT_LENGTH: 500
+
+  # Similarity Threshold for TF-IDF to identify similar news
+  SAME_NEWS_SIMILARITY_THRESHOLD: 0.9
